@@ -115,6 +115,9 @@ class LSH_Forest {
                 if (l2Dist(p, point) < c * r)
                     return &p;
 
+            if (node->children.size() < PARTITION_NUM)
+                return NULL;
+
             Node *c = node->children[point.dot(node->vec) >= node->threshold];
             Point *ans = queryTree(c, point);
             if (ans)
