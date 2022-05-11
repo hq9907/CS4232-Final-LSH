@@ -1,7 +1,7 @@
 TARGET_EXEC := main
 
 CXX = g++
-CXXFLAGS = -std=c++17 -march=native -I ../lib/eigen-3.4.0
+CXXFLAGS = -std=c++17 -O3 -march=native -I ../lib/eigen-3.4.0
 
 
 SRCS := $(shell find -name '*.cpp')
