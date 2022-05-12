@@ -175,9 +175,7 @@ void solve(const vector<Point> &dataset,
 
 
 int main(int argc, char ** argv) {
-		
-    cout << "Reading data..." << endl;
-    vector < Point > dataset = readData();
+	
 
     po::options_description desc("Allowed options");
     desc.add_options()
@@ -185,6 +183,7 @@ int main(int argc, char ** argv) {
     ("output,o", po::value < string > (), "output file")
     ("depth,d", po::value < int > (), "depth of a tree")
     ("num_blocks,n", po::value < int > (), "number of blocks")
+    ("n_dims,k", po::value < int > (), "number of dims")
     ("lambda,l", po::value < int > (), "compression parameter")
     ("num_queries,q", po::value < int > (), "number of queries used for evaluation");
     po::variables_map vm;
@@ -194,7 +193,7 @@ int main(int argc, char ** argv) {
         cout << desc << endl;
         return 0;
     }
-    if (!vm.count("output") || !vm.count("depth") || !vm.count("num_blocks") || !vm.count("lambda") || !vm.count("num_queries")) {
+    if (!vm.count("output") || !vm.count("depth") || !vm.count("num_blocks") || !vm.count("n_dims") || !vm.count("lambda") || !vm.count("num_queries")) {
         cout << desc << endl;
         throw runtime_error("output file, number of blocks, the compression parameter and depth of a tree must be specified");
     }
@@ -202,7 +201,8 @@ int main(int argc, char ** argv) {
     int num_blocks = vm["num_blocks"].as < int > ();
     int depth = vm["depth"].as < int > ();
     int lambda = vm["lambda"].as < int > ();
-		int num_queries = vm["num_queries"].as < int > ();
+	int num_queries = vm["num_queries"].as < int > ();
+    int n_dims = vm["n_dims"].as < int > ();
     if (num_blocks <= 0) {
         cout << desc << endl;
         throw runtime_error("number of blocks must be positive");
@@ -222,20 +222,31 @@ int main(int argc, char ** argv) {
     random_device rd;
     mt19937_64 gen(rd());
 
-		std::default_random_engine generator;
-		std::uniform_real_distribution<double> distribution(-1,1);
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution(-1,1);
+
+    cout << "Reading data..." << endl;
+    vector < Point > orig_dataset = readData();
 
     vector < Point > queries;
+    vector < Point > dataset;
+    for (int i = 0; i < orig_dataset.size(); ++i) {
+        Point p = Point::Zero(n_dims);
+        for(int j = 0; j < n_dims; ++j) {
+            p[j] = orig_dataset[i][j];
+        }
+        dataset.push_back(p);
+    }
 		
-		// Generate some queries
-		for(int i = 0; i < num_queries; ++i) {
-			int idx = rand() % dataset.size();
-			auto query = dataset[idx];
-			for (int j = 0; j < query.size(); ++j) {
-				query[j] += distribution(generator);
-			}
-			queries.push_back(query);
-		}
+    // Generate some queries
+    for(int i = 0; i < num_queries; ++i) {
+        int idx = rand() % dataset.size();
+        auto query = dataset[idx];
+        for (int j = 0; j < query.size(); ++j) {
+            query[j] += distribution(generator);
+        }
+        queries.push_back(query);
+    }
 
 
     int q = queries.size();
