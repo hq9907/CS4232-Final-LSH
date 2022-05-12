@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const unsigned int D = 68;
+const unsigned int D = 68; // Data dimension
 
 typedef Eigen::Vector<float, D> Point;
 
@@ -34,7 +34,7 @@ vector<Point> readData() {
             }
             data.push_back(p);
 
-            // TODO: Short cut for testing
+            // Short cut for testing
             if (data.size() >= 10000)
                 break;
         }

@@ -82,8 +82,6 @@ class LSH_Forest {
                         int end) {
             Node *node = new Node;
 
-            // cout << "build:" << begin << ' ' << end << endl;
-
             node->pivots = computePivots(data, begin, end, k);
 
             if (end - begin == 1)
@@ -91,9 +89,6 @@ class LSH_Forest {
 
             // Euclidean LSH partition
             // Project all points to a random line, and split them
-            // TODO: it's a simple bipartitioning now
-
-            vector<Point> partition[PARTITION_NUM];
 
             node->vec = randomVec(); // select random vector
 
@@ -119,6 +114,9 @@ class LSH_Forest {
                 return NULL;
 
             Node *c = node->children[point.dot(node->vec) >= node->threshold];
+            if (!c)
+                return NULL;
+
             Point *ans = queryTree(c, point);
             if (ans)
                 return ans;
