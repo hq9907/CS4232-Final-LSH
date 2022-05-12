@@ -1,0 +1,5 @@
+method qs
+num_blocks 8
+depth 7
+lambda 2
+size 0
